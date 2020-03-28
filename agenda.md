@@ -20,10 +20,10 @@
     * Using standard library and documentation
     * `struct`
     * `enum` as a sum type
+    * basic `match` statement
     * `trait` as an interface
     * tuples, tuple `structs`
-    * basic `match` statement
-    * `match`, `if`, `loop`, and scopes as expression
+    * scopes as expression
     * Practice:
         * ???
 * More advanced typesystem (15min presentation + 45min practice)

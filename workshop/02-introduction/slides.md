@@ -7,6 +7,8 @@
     * `while` loop
     * `loop` loop
     * Basic of `for in` loop
+* Blocks as expressions
+* Printing and formatting
 
 ---
 
@@ -327,6 +329,68 @@ number: 3.14
 
 ---
 
+### Functions cannot be overriden in Rust
+
+```rust
+fn add(a: f32, b: f32) -> f32 { a + b }
+fn add(a: f64, b: f64) -> f64 { a + b }
+```
+
+```
+error[E0428]: the name `add` is defined multiple times
+ --> src/lib.rs:2:1
+  |
+1 | fn add(a: f32, b: f32) -> f32 { a + b }
+  | ----------------------------- previous definition of the value `add` here
+2 | fn add(a: f64, b: f64) -> f64 { a + b }
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `add` redefined here
+  |
+  = note: `add` must be defined only once in the value namespace of
+          this module
+```
+
+---
+
+### Function arguments can be mutable too
+
+```rust
+fn add(mut a: f32, b: f32) -> f32 {
+    a += b;
+    a
+}
+
+fn main() {
+    println!("2 + 5 = {}", add(2.0, 5.0));
+}
+```
+
+```
+2 + 5 = 7.0
+```
+
+Mutable argument is *not* an output argument - it is only mutable in scope of the function.
+
+---
+
+### Functions can be declared in scope of another functions
+
+```rust
+fn main() {
+    fn add(mut a: f32, b: f32) -> f32 {
+        a += b;
+        a
+    }
+
+    println!("2 + 5 = {}", add(2.0, 5.0));
+}
+```
+
+```
+2 + 5 = 7.0
+```
+
+---
+
 ### `if` conditioanl statement
 
 ```rust
@@ -518,6 +582,84 @@ println!("fact: {}", fact);
 
 ```
 fact: 120
+```
+
+---
+
+### `continue` and `break`
+
+```rust
+let mut n = 0;
+loop {
+    if n >= 10 { break; }
+    n += 1;
+}
+
+while n < 100 {
+    if n % 3 == 2 { continue; }
+    n += 1;
+}
+```
+
+`break` and `continue` statements can be used in any kind of loops.
+
+---
+
+### Lifetime labels
+
+```rust
+let mut n = 0;
+`outer: loop {
+    for i in 0..10 {
+        n += i;
+        if n > 100 {
+            break 'outer;
+        }
+    }
+}
+```
+
+Lifetime labels can be used to `break` or `continue` outer loop
+
+---
+
+### `loop` as expression
+
+```rust
+let mut n = 2;
+let mut m = 1;
+let fact = loop {
+    m *= n;
+    n += 1;
+    if m > 100 {
+        break m;
+    }
+};
+println!("First factorial greater than 100: {}", fact);
+```
+
+```
+First factorial greater than 100: 120
+```
+
+`loop` is also an expression - values is returned from it using `break`, and every `break` has to return value of same type.
+
+---
+
+### Blocks are also expressions
+
+```rust
+let res = {
+    let a = 4;
+    let b = 6;
+    a + b
+};
+
+pritnln!("res: {}", res);
+```
+
+```
+res: 10
 ```
 
 ---

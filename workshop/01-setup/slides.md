@@ -59,6 +59,12 @@ Installed via plugin manager of your IDE
 
 ---
 
+### Rust playground
+
+<https://play.rust-lang.org/>
+
+---
+
 ## Hello World!
 
 ```rust
