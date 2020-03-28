@@ -96,6 +96,8 @@ number / 2 = 2
 number % 3 = 1
 ```
 
+There are no `++` and `--` operator - just use `+= 1` and `-= 1`.
+
 ---
 
 ### After variables are initialized they cannot be overwritten by default - constness by default
