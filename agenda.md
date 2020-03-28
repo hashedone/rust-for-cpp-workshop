@@ -79,3 +79,4 @@ Those topics are not ment to be covered, but if somehow audience would go really
 * HRTBs (higher rank trait bounds)
 * Threading basics
 * Unsafe, soundness, FFI
+* `macro_rules!`
