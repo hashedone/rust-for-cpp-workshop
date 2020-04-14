@@ -547,8 +547,8 @@ important_edge: 5
 
 ### Practice
 
-Create tic-tac-toe game. Players should be defined as an enum, and the game should have functions:
-* `player` which gives back player to perform move
-* `move` taking field number, where current player makes move; function should return tuple of new state, and game outcome
+Create tic-tac-toe game. The game type should have function `move`. `move` takes field number, where current player makes move. Function should return tuple of new state, and game outcome.
+
+Game board is standard 3x3 board, fields are counted from top left corner (0) to bottom righ (9), first by rows, then collumns. Player 'X' begins the game.
 
 `Outcome` should be an enum with values `Ongoing`, `XWon`, `OWon`, `Draw`

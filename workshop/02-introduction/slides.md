@@ -236,7 +236,7 @@ fn name(arg1: Arg1Type, arg2: Arg2Type) [-> ReturnType] {
 }
 ```
 
-Default return type is an unit type (`()`), not C++ `void` equivalent (which is `!` - `never` type which cannot be instantiated - however it is not API yet).
+Default return type is an unit type (`()`), not C++ `void` equivalent (which is `!` - `never` type which cannot be instantiated - however it is not stable API yet).
 
 ---
 
@@ -248,7 +248,7 @@ fn main() {
 }
 ```
 
-In Rust main function doesn't take any arguments. Command line arguments and environment can be accessed via standard library: `std::env::args` function and `std::env::vars`.
+In Rust main function doesn't take any arguments. Command line arguments and environment can be accessed via standard library: `std::env::args` and `std::env::vars` functions.
 
 ---
 
