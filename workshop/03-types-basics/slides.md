@@ -1,9 +1,11 @@
-## Module system and typesystem basics
+## Rust typesystem
 
 * Using standard library and documentation
 * `struct`
-* `enum` as a sum type
-* basic `match` statement
+* `enum`
+* `match` statement
+* `if let` statement
+* `while let` statement
 * `trait` as an interface
 * tuples, tuple `structs`
 * arrays
@@ -228,6 +230,142 @@ fn main() {
 ```
 Shape has 4 corners
 ```
+---
+
+### `enum` as a algebraic type
+
+Enums can be also used as combination of sum and product types - C++ equivalent of "tagged union" - combination of `union` compounded with `enum class` performing as actual tag.
+
+```rust
+enum Shape {
+    Circle(f32),
+    Square(f32),
+    Rombus(f32, f32),
+    Rectangle(f32, f32),
+}
+```
+
+This means, that `Shape` contains additional data depending on the variant it represents. Lets try to do something usefull with it with match:
+
+---
+
+### Destructurization in `match`
+
+```rust
+fn main() {
+    let shape = Shape::Rectangle(10.0, 12.0);
+    match shape {
+        Shape::Circle(radius) =>
+            println!("Circle of radius {}", radius),
+        Shape::Square(edge) =>
+            println!("Square of edge {}", edge),
+        Shape::Rombus(d1, d2) =>
+            println!("Rombus of diagonals {} and {}", d1, d2),
+        Shape::Rectangle(a, b) =>
+            println!("Rectangle of edges {} and {}", a, b),
+    }
+}
+```
+
+```
+Rectangle of edges 10 and 12
+```
+
+---
+
+### Fields in enums can be also named
+
+```rust
+enum Shape {
+    Circle { radius: f32 },
+    Square { edge: f32 },
+    Rombus { diag1: f32, diag2: f32 },
+    Rectangle { edge1: f32, edge2: f32 },
+}
+```
+
+---
+
+### Named enums can be destructurized, and fields can be renamed
+
+```rust
+fn main() {
+    let shape = Shape::Rombus { diag1: 4.0, diag2: 3.0 };
+    match shape {
+        Shape::Circle { radius } =>
+            println!("Circle of radius {}", radius),
+        Shape::Square { edge } =>
+            println!("Square of edge {}", edge),
+        Shape::Rombus { diag1: d1, diag2: d2 } =>
+            println!("Rombus of diagonals {} and {}", d1, d2),
+        Shape::Rectangle { edge1: a, edge2: b } =>
+            println!("Rectangle of edges {} and {}", a, b),
+    }
+}
+```
+
+```
+Rombus of diagonals 4 and 3
+```
+
+---
+
+### Some fields can be ommited
+
+```rust
+fn main() {
+    let shape = Shape::Square { edge: 6.0 };
+    match shape {
+        Shape::Circle { radius } =>
+            println!("Circle of radius {}", radius),
+        Shape::Square { .. } =>
+            println!("Some kind of square"),
+        Shape::Rombus { diag1, .. } =>
+            println!("Rombus with first diagonal of {}", diag1),
+        Shape::Rectangle { edge2, .. } =>
+            println!("Rectangle with second edge of {}", edge2),
+    }
+}
+```
+
+```
+Some kind of square
+```
+
+---
+
+### `if let` can be used to destructurize only single enum variant
+
+```rust
+fn main() {
+    let shape = Shape::Circle { radius: 1.0 };
+    if let Shape::Rombus { .. } = shape {
+        println!("Rombus");
+    } else {
+        println!("Not a rombus");
+    }
+}
+```
+
+```
+Not a rombus
+```
+
+---
+
+### `while let` allows to loop until something matches pattern
+
+```rust
+fn random_shape() -> Shape { /* ... */ }
+
+fn main() {
+    while let Shape::Circle { radius } = random_shape() {
+        println!("Another circle");
+    }
+
+    pritnln!("Not a circle here!");
+}
+```
 
 ---
 
@@ -326,11 +464,59 @@ There are no speciall constructors in rust - there is a convention to use `new` 
 
 ---
 
+### Arguments, including `self` can be passed as borrow (simillar to C++ references)
+
+```rust
+impl Shape {
+    fn corners(&self) -> u8 {
+        match self {
+            Self::Circle => 0,
+            _ => 4,
+        }
+    }
+}
+
+fn main() {
+    let shape = Shape::Circle;
+    println!("Shape has {} corners", shape.corners());
+}
+```
+
+```
+Shape has 0 corners
+```
+
+---
+
+### `self` can be passed as borrow (simillar to C++ references)
+
+```rust
+impl Shape {
+    fn corners(&self) -> u8 {
+        match self {
+            Self::Circle => 0,
+            _ => 4,
+        }
+    }
+}
+
+fn main() {
+    let shape = Shape::Circle;
+    println!("Shape has {} corners", shape.corners());
+}
+```
+
+```
+Shape has 0 corners
+```
+
+---
+
 ### Traits as interfaces
 
 ```rust
 trait Shape {
-    fn area(self) -> f32;
+    fn area(&self) -> f32;
 }
 
 struct Circle {
@@ -338,7 +524,7 @@ struct Circle {
 }
 
 impl Shape for Circle {
-    fn area(self) -> f32 {
+    fn area(&self) -> f32 {
         self.radius * self.radius * std::f32::consts::PI
     }
 }
@@ -354,7 +540,7 @@ struct Square {
 }
 
 impl Shape for Square {
-    fn area(self) -> f32 {
+    fn area(&self) -> f32 {
         self.edge * self.edge
     }
 }
@@ -368,6 +554,51 @@ fn main() {
 
 ```
 square area: 9, circle area: 28.274334
+```
+
+---
+
+### Traits on foreign types
+
+```rust
+trait EuclideanSpace {
+    fn length(&self) -> f32;
+}
+
+impl EuclideanSpace for Vec<f32> {
+    fn length(&self) -> f32 {
+        self.iter().map(|x| x * x).sum::<f32>().sqrt()
+    }
+}
+```
+
+---
+
+### Traits on foreign types
+
+```rust
+fn main() {
+    let v = vec![1.0, 2.0, 3.0];
+    println!("Lengh: {}", v.length());
+}
+```
+
+```
+Lengh: 3.7416575
+```
+
+---
+
+### Traits methods can have default implementation
+
+```rust
+trait Shape {
+    fn circumferene(&self) -> f32;
+    fn area(&self) -> f32;
+    fn circ_to_area_ratio(&self) -> f32 {
+        self.circumferene() / self.area()
+    }
+}
 ```
 
 ---
@@ -431,7 +662,7 @@ One element tuples shoud contain additional comma to distinguish them from expre
 struct Point(f32, f32);
 
 impl Point {
-    fn dist(self, right: Point) -> f32 {
+    fn dist(&self, right: &Point) -> f32 {
         let xdiff = self.0 - right.0;
         let ydiff = self.1 - right.1;
         (xdiff * xdiff + ydiff * ydiff).sqrt()
@@ -543,12 +774,3 @@ fn main() {
 important_edge: 5
 ```
 
----
-
-### Practice
-
-Create tic-tac-toe game. The game type should have function `move`. `move` takes field number, where current player makes move. Function should return tuple of new state, and game outcome.
-
-Game board is standard 3x3 board, fields are counted from top left corner (0) to bottom righ (9), first by rows, then collumns. Player 'X' begins the game.
-
-`Outcome` should be an enum with values `Ongoing`, `XWon`, `OWon`, `Draw`
