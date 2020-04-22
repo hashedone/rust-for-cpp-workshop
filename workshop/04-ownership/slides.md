@@ -50,17 +50,18 @@ In C++ we have move semantics, in Rust there is semantical move - moved object i
 ### Move in C++
 
 ```cpp
-float area(circle: Circle) {
-    return std::numbers::pi_v<float> * circle.radius * circle.radius;
-    // `circle` destructor is called
+float area(Circle&& circle) {
+    Circle local = std::move(circle);
+    return std::numbers::pi_v<float> * local.radius * local.radius;
+    // `local` destructor is called
 }
 
 int main() {
     auto circle = Circle(2.0);
-    // `circle` moved to `area` - move constructor is called, which leaves
-    // old `circle` in undefined destructible state
+    // `circle` moved to `area` - move constructor may be called, which leaves
+    // old `circle` in after-move state
     std::cout << "Circle area: " << area(std::move(circle)) << '\n';
-    // Circle is a valid but undefined object here - basically semantic UB.
+    // Circle may be a valid but unspecified object here - basically semantic UB.
     std::cout << "Circle area: " << area(std::move(circle)) << '\n';
     // `circle` destructor is called
 }
