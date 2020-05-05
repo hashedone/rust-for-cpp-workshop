@@ -35,7 +35,10 @@ Hello closures!
 ```rust
 fn main() {
     let answer = || 41;
-    println!("Answer about life, universe and everything else: {}", answer());
+    println!(
+        "Answer about life, universe and everything else: {}",
+        answer()
+    );
 }
 ```
 
@@ -50,7 +53,10 @@ Answer about life, universe and everything else: 41
 ```rust
 fn main() {
     let printer = |answer| {
-        println!("Answer about life, universe and everything else: {}", answer)
+        println!(
+            "Answer about life, universe and everything else: {}",
+            answer
+        )
     };
 
     printer(41);
@@ -134,7 +140,7 @@ fn main() {
 
 ### Function traits
 
-#### FnOnce -> FnMut -> Fn
+#### `FnOnce` -> `FnMut` -> `Fn
 
 * `FnOnce(u32) -> f32`
 * `FnMut(String) -> String`
@@ -758,7 +764,7 @@ Item: 5
 
 ---
 
-# Even if `Iterator` requires only one function, it deliver whole bunch of them
+### Even if `Iterator` requires only one function, it deliver whole bunch of them
 
 ---
 
@@ -795,7 +801,7 @@ Numbers: [1, 9, 25, 49, 81, 121, 169, 225, 289, 361]
 
 ---
 
-### Filter-map can be done one one take
+### Filter-map can be done on one take
 
 ```rust
 fn main() {
