@@ -183,7 +183,7 @@ error[E0594]: cannot assign to `*borrow` which is behind a `&` reference
 
 ---
 
-### Mutating throug borrow
+### Mutating through borrow
 
 ```rust
 fn main() {
@@ -246,7 +246,7 @@ fn main() {
     let mut number = 2.0;
     let mut_borrow = &mut number;
     // Compile error - variable borrowed mutably before
-    let mut_borrow2 = &number;
+    let mut_borrow2 = &mut number;
     println!("{}", mut_borrow);
 }
 ```
