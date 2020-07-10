@@ -1,6 +1,5 @@
 ## Rust typesystem
 
-* Using standard library and documentation
 * `struct`
 * `enum`
 * `match` statement
@@ -9,58 +8,6 @@
 * `trait` as an interface
 * tuples, tuple `structs`
 * arrays
-
----
-
-### Standard library
-
-Rust programs are organized in modules. Rust standard library is delivered in module named `std`. Sometimes standard library might be disabled (for example for embeded devices without heap), in such cases there is also a `core` module which delivers core library functionality which can be used always, no matter regardless environment capabilities.
-
-Entities inside modules are addressed like in C++ namespaces - with module name and `::`, for example `std::fs::File` is a type to handling files in Rust.
-
----
-
-### `use` keyword
-
-`use` can be used to bring entity from inside the module to the scope of current module, for example:
-
-```rust
-use std::fs::File;
-
-let file = File::open("file.txt").unwrap();
-```
-
-```rust
-use std::fs;
-
-let file = fs::File::open("file.txt").unwrap();
-```
-
----
-
-### `use` grouping
-
-Use statements can be grouped inside curly braces, and `*` can be used to import whole module. Special keyword `self` can be used to import module itself in grouped `use`:
-
-```rust
-// Imports `File` and `FileType` form `std::fs` module,
-// as well as `fs` module from `std` itself
-use std::fs::{File, FileType, self};
-
-// Imports everything from `std::collections` module
-use std::collections::*;
-
-```
-
----
-
-### Standard library documentation and prelude
-
-<https://doc.rust-lang.org/std/index.html>
-
-By default everything from `std::prelude` is imported into global scope: <https://doc.rust-lang.org/std/prelude/index.html>.
-
-In case of compiling wihtout standard library, the `core::prelude::v1` is imported instead: <https://doc.rust-lang.org/core/prelude/v1/index.html>.
 
 ---
 
@@ -369,6 +316,19 @@ fn main() {
 
 ---
 
+### `matches!` macro
+
+```rust
+fn main() {
+    let shape = Shape::Square { edge: 2.0 };
+    if matches!(shape, Shape::Square { edge } if edge > 10.0) {
+        println!("Big square");
+    }
+}
+```
+
+---
+
 ### Structs can have methods defined on them
 
 ```rust
@@ -461,30 +421,6 @@ impl Point {
 ```
 
 There are no speciall constructors in rust - there is a convention to use `new` function for default constructor. Note, that `field: field` can be simplified to `field` on function construction.
-
----
-
-### Arguments, including `self` can be passed as borrow (simillar to C++ references)
-
-```rust
-impl Shape {
-    fn corners(&self) -> u8 {
-        match self {
-            Self::Circle => 0,
-            _ => 4,
-        }
-    }
-}
-
-fn main() {
-    let shape = Shape::Circle;
-    println!("Shape has {} corners", shape.corners());
-}
-```
-
-```
-Shape has 0 corners
-```
 
 ---
 
